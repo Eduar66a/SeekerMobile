@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Checkout code
@@ -24,10 +24,10 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Install Android SDK and Dependencies
+    - name: Install Buildozer and Cython
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsqlite3-dev lld openjdk-17-jdk shared-mime-info autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev google-android-cmdline-tools-11.0-installer
+        sudo apt-get install -y libsqlite3-dev lld openjdk-17-jdk shared-mime-info autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
         python -m pip install --upgrade pip
         pip install "cython<3.0.0" buildozer
 
@@ -40,19 +40,9 @@ jobs:
         sed -i 's/^source.include_exts = .*/source.include_exts = py,png,spec/' buildozer.spec
         sed -i 's/^#icon.filename = .*/icon.filename = %(source.dir)s\/alien.png/' buildozer.spec
         sed -i 's/^android.api = .*/android.api = 33/' buildozer.spec
-        sed -i 's/^#android.permissions = .*/android.permissions = READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,MANAGE_EXTERNAL_STORAGE/' buildozer.spec
-        sed -i 's/^#android.ndk_api = .*/android.ndk_api = 24/' buildozer.spec
+        sed -i 's/^#android.accept_apk_license = .*/android.accept_apk_license = True/' buildozer.spec
 
     - name: Build with Buildozer
       run: |
-        export ANDROID_SDK_ROOT=/usr/lib/android-sdk
-        export ANDROID_HOME=/usr/lib/android-sdk
-        export PATH=$PATH:/usr/lib/android-sdk/cmdline-tools/tools/bin
         export PIP_BREAK_SYSTEM_PACKAGES=1
-        buildozer -v android debug
-
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: SeekerMobile-APK
-        path: bin/*.apk
+        yes | buildozer -v android debug
