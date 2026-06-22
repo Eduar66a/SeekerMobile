@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsqlite3-dev lld openjdk-17-jdk shared-mime-info autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev Setup
+        sudo apt-get install -y libsqlite3-dev lld openjdk-17-jdk shared-mime-info autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
         python -m pip install --upgrade pip
         pip install "cython<3.0.0" buildozer
 
