@@ -44,6 +44,12 @@ jobs:
         sed -i 's/^#android.permissions = .*/android.permissions = READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,MANAGE_EXTERNAL_STORAGE/' buildozer.spec
         sed -i 's/^#android.ndk_api = .*/android.ndk_api = 24/' buildozer.spec
 
+    - name: Fix Android SDK Aidl Path
+      run: |
+        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.0
+        sudo ln -sf /usr/lib/android-sdk/build-tools/debian/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.0/aidl
+        sudo ln -sf /usr/bin/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.0/aidl
+
     - name: Build with Buildozer
       run: |
         export PIP_BREAK_SYSTEM_PACKAGES=1
