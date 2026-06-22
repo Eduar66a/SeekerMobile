@@ -7,53 +7,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - name: Build APK with Buildozer Action
+      uses: ArtemGovorov/buildozer-action@v1
       with:
-        python-version: '3.10'
-
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libsqlite3-dev lld openjdk-17-jdk shared-mime-info autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
-        python -m pip install --upgrade pip
-        pip install "cython<3.0.0" buildozer
-
-    - name: Generate Buildozer Spec
-      run: |
-        buildozer init
-        sed -i 's/^title = .*/title = Seeker Mobile/' buildozer.spec
-        sed -i 's/^package.name = .*/package.name = seekermobile/' buildozer.spec
-        sed -i 's/^package.domain = .*/package.domain = org.alien/' buildozer.spec
-        sed -i 's/^source.include_exts = .*/source.include_exts = py,png,spec/' buildozer.spec
-        sed -i 's/^#icon.filename = .*/icon.filename = %(source.dir)s\/alien.png/' buildozer.spec
-        sed -i 's/^android.api = .*/android.api = 33/' buildozer.spec
-        sed -i 's/^#android.build_tools_version = .*/android.build_tools_version = 33.0.0/' buildozer.spec
-        sed -i 's/^#android.permissions = .*/android.permissions = READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,MANAGE_EXTERNAL_STORAGE/' buildozer.spec
-        sed -i 's/^#android.ndk_api = .*/android.ndk_api = 24/' buildozer.spec
-
-    - name: Fix Android SDK Aidl Path
-      run: |
-        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.0
-        sudo ln -sf /usr/lib/android-sdk/build-tools/debian/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.0/aidl
-        sudo ln -sf /usr/bin/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.0/aidl
-
-    - name: Build with Buildozer
-      run: |
-        export PIP_BREAK_SYSTEM_PACKAGES=1
-        buildozer -v android debug
+        workdir: .
+        buildozer_version: stable
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
