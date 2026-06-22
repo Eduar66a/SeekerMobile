@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout code
@@ -16,19 +16,18 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.10'
 
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libsqlite3-dev lldd lld openjdk-17-jdk shared-mime-info
+        sudo apt-get install -y libsqlite3-dev lldd lld openjdk-17-jdk shared-mime-info autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
         pip install --upgrade pip
-        pip install buildozer cython==0.29.36 git+https://github.com/kivy/python-for-android.git@master
+        pip install "cython<3.0.0" buildozer
 
     - name: Generate Buildozer Spec
       run: |
         buildozer init
-        # Modificamos el archivo spec automáticamente con tus datos
         sed -i 's/^title = .*/title = Seeker Mobile/' buildozer.spec
         sed -i 's/^package.name = .*/package.name = seekermobile/' buildozer.spec
         sed -i 's/^package.domain = .*/package.domain = org.alien/' buildozer.spec
@@ -36,7 +35,7 @@ jobs:
         sed -i 's/^#icon.filename = .*/icon.filename = %(source.dir)s\/alien.png/' buildozer.spec
         sed -i 's/^android.api = .*/android.api = 33/' buildozer.spec
         sed -i 's/^#android.permissions = .*/android.permissions = READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,MANAGE_EXTERNAL_STORAGE/' buildozer.spec
-        sed -i 's/^#android.ndk = .*/android.ndk = 25b/' buildozer.spec
+        sed -i 's/^#android.ndk_api = .*/android.ndk_api = 24/' buildozer.spec
 
     - name: Build with Buildozer
       run: |
