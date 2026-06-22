@@ -31,7 +31,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install "cython<3.0.0" buildozer
 
-    - name: Generate Buildozer Spec
+   - name: Generate Buildozer Spec
       run: |
         buildozer init
         sed -i 's/^title = .*/title = Seeker Mobile/' buildozer.spec
@@ -40,7 +40,10 @@ jobs:
         sed -i 's/^source.include_exts = .*/source.include_exts = py,png,spec/' buildozer.spec
         sed -i 's/^#icon.filename = .*/icon.filename = %(source.dir)s\/alien.png/' buildozer.spec
         sed -i 's/^android.api = .*/android.api = 33/' buildozer.spec
-        sed -i 's/^#android.accept_apk_license = .*/android.accept_apk_license = True/' buildozer.spec
+        # ESTA ES LA LÍNEA CLAVE PARA EL ERROR DEL NDK:
+        sed -i 's/^#android.ndk = .*/android.ndk = 25b/' buildozer.spec
+        sed -i 's/^#android.permissions = .*/android.permissions = READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,MANAGE_EXTERNAL_STORAGE/' buildozer.spec
+        sed -i 's/^#android.ndk_api = .*/android.ndk_api = 24/' buildozer.spec
 
     - name: Build with Buildozer
       run: |
